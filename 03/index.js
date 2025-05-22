@@ -116,7 +116,38 @@ que hay envia mensaje error mala petición.*/
 
 // Se retorna la palabra atualizada y tambien la palabra anterior que estaba en esa misma posición.
   return res.json({ actualizada: palabra, anterior: palabraAModificar});
+});
 
+app.delete('/api/palabras/:pos', (req, res) => {
+// se obtiene el params pos con desestructuración.
+  const { pos } = req.params;
+
+// Se parsea pos para que transforme a entero en caso de que usuario ingrese numero con decimal.
+  let num = parseInt(pos);
+
+// Validación: verifica si es numero entero, se lo contratio envia mensaje error de mala petición.
+  if(isNaN(num)){
+    return res.status(400).json({ error: 'El parámetro requerido debe ser un número válido'});
+  }
+
+  // Divide el string en palabras y lo transforma en un array de palabras.
+  const palabras = frase.split(' ');
+
+/* Validación: si el numero entregado por usuario es menor a 1 y mayor a la cantidad de palabras 
+que hay envia mensaje error mala petición.*/
+  if(num < 1 || num > palabras.length) {
+    return res.status(400).json({ error: 'El parámetro definido está fuera de rango'});
+  };
+
+
+//
+  const palabraEliminada = palabras.splice((num -1), 1);
+
+// Se actuliza frase convirtiendo el array palabras en un string unidos por un espacio cada elemento.
+  frase = palabras.join(' ');
+
+// Se retorna la palabra eliminada.
+  return res.json({ eliminada: palabraEliminada[0]});
 });
 
 // app.listen(...) inicia el servidor y lo pone a escuchar en el puerto definido.
